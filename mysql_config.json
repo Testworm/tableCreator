@@ -1,0 +1,10 @@
+{
+    "test":{
+        "host":"localhosts",
+        "port":3326,
+        "user":"root",
+        "password":"111111",
+        "database":"test",
+        "charset":"utf8"
+    }
+}
