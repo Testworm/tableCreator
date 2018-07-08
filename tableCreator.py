@@ -18,10 +18,11 @@ import compiler
 import numpy
 
 
-def getTableCols(xlsx, tableName):
+# xlsx为excel名称, sheet为所在sheet名字(字符型), i, j分别为字段名和类型所在列数(int), tableName为表名字
+def getTableCols(xlsx, sheet, i, j, tableName):
     wb = openpyxl.load_workbook(xlsx)
     # 选择sheet
-    sheetA = wb['a']
+    sheetA = wb[sheet]
     active = wb.active  # 选择打开展示的sheet
     cols = sheetA.columns
     # print(col)
@@ -32,9 +33,9 @@ def getTableCols(xlsx, tableName):
     # i = 1
     for cellRow in rows:
         # 选择字段名所在列
-        keys.append(cellRow[1].value)
+        keys.append(cellRow[i].value)
         # 选择字段类型所在列
-        values.append(cellRow[2].value)
+        values.append(cellRow[j].value)
         keyss = keys[1:]
         valuess = values[1:]
         # print(keyss)
@@ -60,4 +61,4 @@ def tableCreatSQL(dict, table):
 
 if __name__ == '__main__':
     # print(tableCreatSQL(getTableCols('test.xlsx'), 'temp'))
-    print(getTableCols('test.xlsx', 'user'))
+    print(getTableCols('test.xlsx', 'a', 1, 2, 'user'))
