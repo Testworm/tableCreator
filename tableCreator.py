@@ -61,28 +61,3 @@ def tableCreatSQL(dict, table):
 if __name__ == '__main__':
     # print(tableCreatSQL(getTableCols('test.xlsx'), 'temp'))
     print(getTableCols('test.xlsx', 'user'))
-
-
-
-
-
-
-
-
-
-
-
-
-# 建表模板
-# tableCols = 'a'
-# tableName = 'user'
-# comment = '资产账户表'
-# model = 'Drop table if exists `'+str(tableName)+'`('+tableCols+')'+'ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT="'+comment+'";'
-# print(model)
-
-
-
-
-
-
-
