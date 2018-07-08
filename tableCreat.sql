@@ -1,0 +1,1 @@
+Drop table if EXISTS `user`;CREATE TABLE `user` (`age_period` varchar(10),`activity` int(10),`open_time` datetime,`credit_client_group` int(10),`client_asset_level` varchar(10)) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="临时表";

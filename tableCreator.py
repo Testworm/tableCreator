@@ -5,53 +5,62 @@
 # @Time   : 2018/6/22 10:42
 
 # 根据excel表格的字段 建表, 以列/行的字段两种情况为例子
-# 整体思路, 读取excel/csv表格的字段, 并存储到 list中, 结合建表语句, 创建表; 核心问题, 如何兼顾 字符的类型格式;
+# 整体思路, 读取excel/csv表格的字段, 并存储到 dict, 结合建表语句, 创建表; 核心问题, 如何兼顾 字符的类型格式;
 # 或者生成建表语句; 问题：1.数据库类型;2.所有字符类型
-# 涉及的 模块：pyMysql, os, random , string
-# 实现过程：1.读取文件,存到list 2.插入模板 3.保存到sql文件
+# 涉及的 模块： os, random , string
+# 实现过程：1.读取文件,存到dict 2.插入模板 3.保存到sql文件
 
 import csv
 import os
 import random
 import openpyxl
+import compiler
+import numpy
 
-wb = openpyxl.load_workbook('test.xlsx')
-# print(type(wb))
-# wb.get_sheet_names()
-# print(wb.get_sheet_by_name('a'))
-# sheetA = wb.get_sheet_by_name('a')
-sheetA = wb['a']
-active = wb.active  # 选择打开展示的sheet
-# 获取最大行数,max_row; max_column 获取最大列数
-# print(active.max_column)
-# print(active)
-# print(sheetA)
-# print(sheetA['A'])
-# sheetValue = sheetA.cell(row=1, column=2)
-# print(sheetValue.value)
-# for i in range(2, 8):
-#     print(i, sheetA.cell(row=i, column=1).value)
-# for i in range(1, 3):
-#     cols = sheetA.columns[i]
-#     for cellObj in cols:
-#         print(cellObj.value)
-col = sheetA.columns
-# print(col)
-rows = sheetA.rows
-# for cellObj in col:
-#     for cell in cellObj:
-#         print(cell.value)
-#     print(end=',')
-# print(type(rows))
-for cellRow in rows:
-    saveRows = []
-    for cellR in cellRow:
-        # print(cellR.value)
-        saveRows.append(cellR.value)
-    # print(saveRows)
-    print(' '.join(saveRows[1:]), end=',')
-    # print(end=',')
 
+def getTableCols(xlsx, tableName):
+    wb = openpyxl.load_workbook(xlsx)
+    # 选择sheet
+    sheetA = wb['a']
+    active = wb.active  # 选择打开展示的sheet
+    cols = sheetA.columns
+    # print(col)
+    rows = sheetA.rows
+    keys = []
+    values = []
+    dicts = dict()
+    # i = 1
+    for cellRow in rows:
+        # 选择字段名所在列
+        keys.append(cellRow[1].value)
+        # 选择字段类型所在列
+        values.append(cellRow[2].value)
+        keyss = keys[1:]
+        valuess = values[1:]
+        # print(keyss)
+        for key, value in zip(keyss, valuess):
+            dicts[key] = value
+    return tableCreatSQL(dicts, tableName)
+
+
+def tableCreatSQL(dict, table):
+    savecols = []
+    for key, value in zip(dict.keys(), dict.values()):
+        # print(key, value)
+        col_type = '`' + key + '`' + ' ' + value
+        savecols.append(col_type)
+    sql = ','.join(savecols)
+    # tableSQL = 'CREATE TABLE `'+table+'` (' + sql + ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="临时表";'
+    tableSQL = 'Drop table if EXISTS `' + table + '`;' \
+            'CREATE TABLE `' + table + '` (' + sql + ') ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT="临时表";'
+    with open('tableCreat.sql', 'w', encoding='utf-8') as f:
+        f.write(tableSQL)
+    return tableSQL
+
+
+if __name__ == '__main__':
+    # print(tableCreatSQL(getTableCols('test.xlsx'), 'temp'))
+    print(getTableCols('test.xlsx', 'user'))
 
 
 
